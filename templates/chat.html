@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Movie Chat</title>
+    <!--Link to CSS -->
+    <link href="../static/bootstrap.min.css" rel="stylesheet" /> 
+    <link href="../static/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='sentimentbar.css') }}">
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            var username;
+            $(document).ready(function(){
+
+                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+
+                socket.on('connect', function() {
+                    socket.emit('join', {});
+                });
+
+                socket.on('status', function(data) {
+                    // $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
+                    $('#chat').html($('#chat').html() +'<div>' + data.msg  + '</div>\n');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+
+                socket.on('message', function(data) {
+                    // $('#chat').val($('#chat').val() + data.msg + ' ['+data.sentiment+'] \n');
+                    $('#chat').html($('#chat').html() + '<div class=\"container\""><div contenteditable=\"false\" class=\"message\"> <div class=\"message-username\">' + data.username + '</div>' 
+                                                      + '<div class=\"message-text-datetime\"> <div class=\"message-text\">' + data.msg + ' </div> ' 
+                                                      + '<div class=\"message-datetime\"> ' + data.date_time.split(",")[1] + ' </div></div> <div class="auxmargin"> </div></div></div>');
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                    $('#topic').html(data.category)
+                    $('.meter > span').each(
+                        function () {
+                        $(this).animate({width: String(data.average_sentiment*100) + '%'},1200);
+                        if (data.average_sentiment < 0.33) {
+                            $('.changecolor > span').css("background-image","linear-gradient(#f0a3a3, #f42323)")
+                        } else if (data.average_sentiment < 0.66) {
+                            $('.changecolor > span').css("background-image","linear-gradient(#f1a165, #f36d0a)")
+                        } else {
+                            $('.changecolor > span').css("background-image","linear-gradient(#2bc253, #54f054)")
+                        }
+                        }
+                        );
+                    
+                    $("#emoji").removeClass('emoji-move').delay(50).queue(
+                        function (next) {
+                            if (data.sentiment < 0.125) {      
+                                $(this).text('😭').addClass('emoji-move');
+                                next();
+                            } else if (data.sentiment < 0.25) {
+                                $(this).text('😢').addClass('emoji-move');
+                                next();
+                            } else if (data.sentiment < 0.375) {
+                                $(this).text('🙁').addClass('emoji-move');
+                                next();
+                            } else if (data.sentiment <= 0.50) {
+                                $(this).text('😐').addClass('emoji-move');
+                                next();
+                            } else if (data.sentiment < 0.625) {
+                                $(this).text('🙂').addClass('emoji-move');
+                                next();
+                            } else if (data.sentiment < 0.75) {
+                                $(this).text('😊').addClass('emoji-move');
+                                next();    
+                            } else if (data.sentiment < 0.875) {
+                                $(this).text('😊').addClass('emoji-move');
+                                next(); 
+                            } else {
+                                $(this).text('🤩').addClass('emoji-move');
+                                next();
+                            }
+                        }
+                    );
+                    
+                });
+
+                $('#send').click(function(e) {
+                        text = $('#text').val();
+                        $('#text').val('');
+                        socket.emit('text', {username: "{{ session['username'] }}", msg: text, room: " {{ session['room'] }} "});
+                });
+
+                $('#text').keypress(function (e) {
+                        if (e.which == 13) {
+                            text = $('#text').val();
+                            $('#text').val('');
+                            socket.emit('text', {username: "{{ session['username'] }}", msg: text, room: " {{ session['room'] }} "});
+                        return false;
+                    }
+                });
+
+            });
+            function leave_room() {
+                socket.emit('left', { username: "{{ session['username'] }}"}, function() {
+                    socket.disconnect();
+                    // go back to the login page
+                    window.location.href = "{{ url_for('index') }}";
+                });
+            }
+        </script>
+        
+        
+        <script>
+                $(document).ready(function() {
+                // Map plaintext smilies to Unicode equivalents
+                var emoji = {
+                                ':)': '😊',
+                                ':(': '🙁'
+                            },
+
+                    // Function to escape regular expressions
+                    reEscape = function(s) {
+                                return s.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+                                };
+
+                $('input.emojify').keyup(function() {
+                    var text = $(this).val();
+
+                    // See if any of our emoji exist in the text and replace with Unicode
+                    $.each(emoji, function(plaintext, unicode) {
+                    text = text.replace(new RegExp(reEscape(plaintext), 'g'), unicode);
+                    });
+
+                    // Replace text with new values
+                    $(this).val(text);
+                });
+                });
+        </script>
+      <script type="text/javascript">
+          window.onbeforeunload = function() {
+              return "Are you sure you want to leave?";
+          }
+      </script>
+</head>
+
+
+
+
+  <body class="text-center" onunload=leave_room()>
+
+    <div class="chatwindow">
+        <h1>Movie Chat </h1>
+        <h2>Room: {{session['room']}}</h2>
+        <div id="sentimentbar">
+            <div class="meter changecolor">
+                <span></span>
+            </div>
+        </div>
+
+        <div class="textarea" id="chat" contenteditable="true" readonly="readonly"> </div>
+        <div id="inputcontainer">
+            <input type="text" id="text" size="60" placeholder="Enter your message here" autofocus="autofocus" class="emojify"/>
+            {% include 'emojipicker.html' %}  
+            <button type="button" id="send" class="btn btn-success">SEND</button>
+        </div>  
+        <br /><br /> 
+        <button type="button" class="btn btn-danger" id="leave" onclick=leave_room()>Leave this Chat</button><br /><br />
+        <div id="emoji" class="emoji-notmove"></div>
+    </div>
+
+  </body>
+</html>

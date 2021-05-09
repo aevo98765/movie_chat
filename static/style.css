@@ -1,0 +1,187 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.title-and-flash {
+  width: 100%;
+  max-width: 400px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 400px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+.chatwindow{
+  position: relative;
+	top:50;
+	bottom: 50;
+	left: 0;
+  right: 0;
+  margin: auto;
+  width: 60%;
+  padding: 30px; 
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+}
+h2{
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+#title {
+  margin-top: 10vh;
+  font-size: 30pt;
+}
+
+#emoji {
+  opacity: 0;
+  position: absolute;
+  overflow: hidden;
+}
+
+.emoji-notmove {
+  opacity: 0;
+}
+.emoji-move {
+  font-size: 48px;
+  position: absolute;
+  animation-name: surfing;
+  animation-duration: 1.0s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  overflow: hidden;
+  opacity: 1;
+  display: inline;
+}
+
+@keyframes surfing {
+  from {  
+    top: 60vh;
+    left: 50vh;
+    opacity:1;
+  }
+  to {
+    top: 20vh;
+    left: 50vh;
+    opacity:1;
+
+  }
+}
+
+#text {
+  flex: auto;
+  height: 37px;
+}
+
+#send {
+  flex: auto;
+  height: 37px;
+  margin-left: 1%;
+}
+
+#inputcontainer {
+  display: flex;
+  height: 37px;
+  max-width: 80%;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+.textarea {
+  width: 80vh;
+  height: 45vh;
+  border: 1pt solid darkgray;
+  background-color: white;
+  margin: 10px auto 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  overflow-y: auto;
+}
+
+.text-center {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+.container {
+  display: flex;
+  overflow-y: visible;
+  overflow-y: visible;
+  max-height: 30vh;}
+
+.message {
+  flex-grow: auto;
+  display:flex;
+  border: 1.5pt solid lightgray;
+  border-radius: 10pt;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: 1%;
+  padding: 0.75%;
+  font-size: 11pt;
+  min-width: 30%;
+  max-width: 85%;
+  max-height: 30vh;
+  overflow-y: auto;
+} 
+.auxmargin {
+  max-height: 30vh;
+  flex-grow: auto;
+}
+.message-username {
+  align-self: flex-start;
+  font-weight: 600;
+  padding: 0;
+}
+
+.message-text-datetime {
+  justify-content: space-between;
+  overflow-y: visible;
+  display: flex;
+}
+.message-text {
+  align-self: flex-start;
+  padding: 0;
+  height: 35px;
+
+
+}
+.message-datetime {
+  align-self: flex-end;
+  font-size: 9pt;
+  color: gray;
+  margin-top: auto;
+}
+

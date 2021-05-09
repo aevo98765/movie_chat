@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+        {% block content %}
+        <form class="form-signin" action="{{url_for('create_account')}}" method="POST">
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" minlength=4 required autofocus><br>
+            <div class="password-container">
+                <p type="text" id="password-strength-text"> Very weak </p>
+                <progress max="5" id="password-strength-meter" min="0" max="5" value="0" low="2" high="4" optimum="5"></progress>
+            </div>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" minlength=8 required autofocus><br>
+            <button class="btn btn-lg btn-primary btn-success btn-block" id="startchatbutton" value="submit">Create</button>
+          </form>
+          <div class="form-signin">
+            <button class="btn btn-primary btn-lg btn-danger btn-block" id="createacc" value="create" onclick=go_to_login()>Back to login</button>
+          </div>
+
+  <script>
+    function go_to_login() {
+        window.location.href = "{{ url_for('index') }}";
+    }
+
+    $(function(){
+        $('body').on('input', "#password", function() {
+
+            var strength = 0  
+
+            if ($(this).val().length < 5) {
+                $("#password").css("border","2pt solid red")
+            } else {
+                $("#password").css("border","2pt solid green")
+            }
+
+            if ($(this).val().length > 7) strength += 1 
+            if ($(this).val().match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1  
+            if ($(this).val().match(/([a-zA-Z])/) && $(this).val().match(/([0-9])/)) strength += 1  
+            if ($(this).val().match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1  
+            if ($(this).val().match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1 
+            
+            var state;
+            if (strength < 1){
+                state = "Very weak";
+            } else if (strength < 2) {
+                state = "Weak";
+            } else if (strength < 3) {
+                state = "Not bad";
+            } else if (strength < 4) {
+                state = "Good";
+            } else if (strength < 5) {
+                state = "Very good";
+            } else {
+                state = "Perfect!";
+            }
+            $('#password-strength-text').text(state)
+            $("#password-strength-meter").attr("value",strength)
+        });
+
+        $('body').on('input', "#username", function() {
+            if ($(this).val().length < 4) {
+                $("#username").css("border","2pt solid red")
+            } else {
+                $("#username").css("border","2pt solid green")
+            }
+        });
+    });
+  </script> 
+
+{% endblock %}

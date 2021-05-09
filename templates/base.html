@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Movie Chat</title>
+  <!--Link to CSS -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link href="../static/bootstrap.min.css" rel="stylesheet">
+  <link href="../static/style.css" rel="stylesheet">
+  <link href="../static/create_account.css" rel="stylesheet">
+
+</head>
+
+<body class="text-center"> 
+    <div class="title-and-flash">
+        {% include 'title.html' %}
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+
+    {% block content %}
+    {% endblock %}
+    </body>
+
+</html>
