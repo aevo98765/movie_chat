@@ -34,3 +34,7 @@ Create a account and start chatting!
 Navigate to chatbot/film_scene.py
 
 On lines 57-59 the script and chat room are entered into the new Film_scene object. Choose what movie script (listed in chatbot/movie_dialogue/) you would like to be acted out and in what chat room number. Why not join the actors and contribute to the movie.
+
+Navigate back to ./movie_chat and type the command 'python chatbot/film_scene.py
+
+If chromedriver related issues occur redownload this from the offcial website for the current version of chrome you have.
